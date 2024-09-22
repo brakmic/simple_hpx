@@ -3,7 +3,7 @@
 
 int main()
 {
-  hpx::cout << "The aswer is 42!\n"
+  hpx::cout << "The answer is 42!\n"
             << std::flush;
   return 0;
 }
