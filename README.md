@@ -1,5 +1,7 @@
 # Minimal HPX Demo
 
+![CI](https://github.com/brakmic/simple_hpx/actions/workflows/ci.yml/badge.svg)
+
 This project is a minimal demo to help new users get familiar with the HPX library. It demonstrates how to use HPX's core functionality, including asynchronous output (`hpx::cout`). The program prints "The answer is 42!" to the console using HPX's parallel execution engine.
 
 ## What is HPX?
@@ -15,46 +17,44 @@ This project uses HPX's `hpx_main` to handle the underlying runtime initializati
 
 ## Prerequisites
 
-To compile and run this project, you'll need the following dependencies:
-
-1. **HPX**: Install HPX via your package manager or build from source. Check out [HPX installation guide](https://hpx-docs.stellar-group.org/latest/html/quickstart.html#).
-2. **Boost**: Ensure Boost (version 1.71 or higher) is installed on your system. [Boost installation guide](https://www.boost.org/doc/libs/1_86_0/more/getting_started/index.html).
+- Docker.
+- The demo builds inside `brakmic/hpx-builder:1.11.0`, which provides HPX
+  1.11.0, Boost 1.83, GCC 13, and CMake 3.28. A local HPX installation also
+  works with CMake 3.15+ and a C++23 compiler.
 
 ## Build Instructions
 
-Follow these steps to build and run the project:
+Build inside the builder image:
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/brakmic/simple_hpx.git
-    cd simple_hpx
-    ```
+```bash
+docker run --rm -it -v "$PWD:/src" brakmic/hpx-builder:1.11.0 /bin/bash
+```
 
-2. Create a build directory:
-    ```bash
-    mkdir build && cd build
-    ```
+Inside the container:
 
-3. Configure the project using CMake:
-    ```bash
-    cmake ..
-    ```
+```bash
+cmake -S /src -B /src/build -DCMAKE_PREFIX_PATH=/usr/local/hpx
+cmake --build /src/build --parallel 2
+/src/build/simple_hpx
+```
 
-4. Build the project:
-    ```bash
-    make
-    ```
+A one-shot build and run:
 
-5. Run the program:
-    ```bash
-    ./simple_hpx
-    ```
+```bash
+docker run --rm -v "$PWD:/src:ro" brakmic/hpx-builder:1.11.0 bash -lc '
+  cp -a /src /tmp/app
+  cmake -S /tmp/app -B /tmp/app/build -DCMAKE_PREFIX_PATH=/usr/local/hpx
+  cmake --build /tmp/app/build --parallel 2
+  /tmp/app/build/simple_hpx
+'
+```
 
 You should see the following output:
 
-```bash
+```text
 The answer is 42!
-````
+```
 
 ## License
+
 [MIT](./LICENSE)
